@@ -2,7 +2,7 @@ import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 
 
-const baseURL = 'https://kartik-assignment.vercel.app/';
+const baseURL = 'https://true-bacons-assignment.onrender.com/';
 
 export const axiosInstance = axios.create({
   baseURL,
