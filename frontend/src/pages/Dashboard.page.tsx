@@ -120,12 +120,14 @@ function Dashboard() {
       notifications.show({
         title: 'Success',
         message: 'Chart data fetched successfully',
+        color: 'green',
       });
     } catch (error) {
       console.error('Error fetching data:', error);
       notifications.show({
         title: 'Error',
         message: 'Failed to fetch chart data',
+        color: 'red',
       });
     }
   };

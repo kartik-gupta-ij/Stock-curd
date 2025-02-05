@@ -30,9 +30,10 @@ export function AuthenticationForm(props: PaperProps) {
     },
 
     validate: {
-      // name: (val) => (val.length === 0 ? 'Name is required' : null),
+      name: (val) => (type === 'register' && val.length === 0 ? 'Name is required' : null),
       username: (val) => (val.length === 0 ? 'Username is required' : null),
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+      terms: (val) => (type === 'register' && !val ? 'You must accept terms and conditions' : null),
     },
   });
 
@@ -54,12 +55,14 @@ export function AuthenticationForm(props: PaperProps) {
           notifications.show({
             title: 'Success',
             message: 'User registered successfully',
+            color: 'green',
           });
           toggle();
         } else {
           notifications.show({
             title: 'Error',
             message: 'Internal server error',
+            color: 'red',
           });
         }
       } catch (error: any) {
@@ -68,11 +71,13 @@ export function AuthenticationForm(props: PaperProps) {
           notifications.show({
             title: 'Error',
             message: 'User already exists',
+            color: 'red', 
           });
         } else {
           notifications.show({
             title: 'Error',
             message: 'An error occurred',
+            color: 'red',
           });
         }
       }
@@ -87,12 +92,14 @@ export function AuthenticationForm(props: PaperProps) {
           notifications.show({
             title: 'Success',
             message: 'Login successful',
+            color: 'green',
           });
           navigate('/dashboard');
         } else {
           notifications.show({
             title: 'Error',
             message: 'Internal server error',
+            color: 'red',
           });
         }
       } catch (error: any) {
@@ -101,11 +108,13 @@ export function AuthenticationForm(props: PaperProps) {
           notifications.show({
             title: 'Error',
             message: 'Invalid credentials',
+            color: 'red',
           });
         } else {
           notifications.show({
             title: 'Error',
             message: 'An error occurred',
+            color: 'red',
           });
         }
       }
@@ -141,6 +150,7 @@ export function AuthenticationForm(props: PaperProps) {
                 placeholder="Your name"
                 value={form.values.name}
                 onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+                error={form.errors.name}
                 radius="md"
               />
             )}
@@ -170,6 +180,7 @@ export function AuthenticationForm(props: PaperProps) {
                 label="I accept terms and conditions"
                 checked={form.values.terms}
                 onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
+                error={form.errors.terms}
               />
             )}
           </Stack>
