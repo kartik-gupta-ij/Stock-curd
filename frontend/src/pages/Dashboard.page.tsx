@@ -3,10 +3,11 @@ import { LineChart } from '@mantine/charts';
 import { Box, Card, Select, Stack, Title } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
+import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+import { OrderForm } from '../components/OrderForm';
+import { ProfileCard } from '../components/ProfileCard';
+import { TotalPnLCard } from '../components/TotalPnLCard';
 import { axiosInstance } from '../utils/axiosSetup';
-import { OrderForm } from './OrderForm';
-import { ProfileCard } from './ProfileCard';
-import { TotalPnLCard } from './TotalPnLCard';
 
 export interface Profile {
   user_id: string;
@@ -40,33 +41,6 @@ interface ChartData {
     price: number;
   }[];
 }
-
-const demoData = {
-  status: 'success',
-  data: [
-    { date: '2017-01-02 00:00:00+05:30', price: 8179.5 },
-    { date: '2017-01-03 00:00:00+05:30', price: 8192.25 },
-    { date: '2017-01-04 00:00:00+05:30', price: 8190.5 },
-    { date: '2017-01-05 00:00:00+05:30', price: 8273.8 },
-    { date: '2017-01-06 00:00:00+05:30', price: 8243.8 },
-    { date: '2017-01-09 00:00:00+05:30', price: 8236.05 },
-    { date: '2017-01-10 00:00:00+05:30', price: 8288.6 },
-    { date: '2017-01-11 00:00:00+05:30', price: 8380.65 },
-    { date: '2017-01-12 00:00:00+05:30', price: 8407.2 },
-    { date: '2017-01-13 00:00:00+05:30', price: 8400.35 },
-    { date: '2017-01-16 00:00:00+05:30', price: 8412.8 },
-    { date: '2017-01-17 00:00:00+05:30', price: 8398 },
-    { date: '2017-01-18 00:00:00+05:30', price: 8417 },
-    { date: '2017-01-19 00:00:00+05:30', price: 8435.1 },
-    { date: '2017-01-20 00:00:00+05:30', price: 8349.35 },
-    { date: '2017-01-23 00:00:00+05:30', price: 8391.5 },
-    { date: '2017-01-24 00:00:00+05:30', price: 8475.8 },
-    { date: '2017-01-25 00:00:00+05:30', price: 8602.75 },
-    { date: '2017-01-27 00:00:00+05:30', price: 8641.25 },
-    { date: '2017-01-30 00:00:00+05:30', price: 8632.75 },
-    { date: '2017-01-31 00:00:00+05:30', price: 8561.3 },
-  ],
-};
 
 const holdings_response = {
   status: 'success',
@@ -103,7 +77,7 @@ const holdings_response = {
 function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [holdings, setHoldings] = useState<Holdings | null>(holdings_response);
-  const [chartData, setChartData] = useState<ChartData | null>(demoData);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
   const [symbol, setSymbol] = useState('NIFTY 50');
   const [fromDate, setFromDate] = useState<Date | null>(new Date('2017-01-02T00:00:00+05:30'));
   const [toDate, setToDate] = useState<Date | null>(new Date('2017-01-31T00:00:00+05:30'));
@@ -251,9 +225,10 @@ function Dashboard() {
       <LineChart
         h={300}
         data={chartData?.data ?? []}
-        dataKey="date"
+        dataKey='date'
         series={[{ name: 'price', color: 'blue' }]}
       />
+      <ColorSchemeToggle />
     </Box>
   );
 }

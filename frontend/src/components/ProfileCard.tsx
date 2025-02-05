@@ -1,6 +1,5 @@
 import { Card, Group, Text, Title } from '@mantine/core';
-import { Profile } from './Dashboard.page';
-
+import { Profile } from '../pages/Dashboard.page';
 
 interface ProfileCardProps {
   profile: Profile;

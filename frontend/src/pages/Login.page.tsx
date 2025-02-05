@@ -17,6 +17,7 @@ import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { axiosInstance } from '../utils/axiosSetup';
+import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -197,6 +198,7 @@ export function AuthenticationForm(props: PaperProps) {
           </Group>
         </form>
       </Paper>
+         <ColorSchemeToggle />
     </Box>
   );
 }
