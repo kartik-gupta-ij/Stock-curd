@@ -30,6 +30,7 @@ export function AuthenticationForm(props: PaperProps) {
     },
 
     validate: {
+      // name: (val) => (val.length === 0 ? 'Name is required' : null),
       username: (val) => (val.length === 0 ? 'Username is required' : null),
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
     },
@@ -39,7 +40,6 @@ export function AuthenticationForm(props: PaperProps) {
     const token = localStorage.getItem('token');
     if (token) {
       // navigate('/dashboard');
-      
     }
   }, [navigate]);
 
@@ -69,11 +69,12 @@ export function AuthenticationForm(props: PaperProps) {
             title: 'Error',
             message: 'User already exists',
           });
+        } else {
+          notifications.show({
+            title: 'Error',
+            message: 'An error occurred',
+          });
         }
-        notifications.show({
-          title: 'Error',
-          message: 'An error occurred',
-        });
       }
     } else {
       try {

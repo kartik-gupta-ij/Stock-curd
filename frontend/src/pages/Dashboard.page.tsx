@@ -8,7 +8,6 @@ import { OrderForm } from './OrderForm';
 import { ProfileCard } from './ProfileCard';
 import { TotalPnLCard } from './TotalPnLCard';
 
-
 export interface Profile {
   user_id: string;
   user_type: string;
@@ -101,16 +100,8 @@ const holdings_response = {
   ],
 };
 
-const profile_response = {
-  user_id: 'AB1234',
-  user_type: 'individual',
-  email: 'xxxyyy@gmail.com',
-  user_name: 'AxAx Bxx',
-  broker: 'ZERODHA',
-};
-
 function Dashboard() {
-  const [profile, setProfile] = useState<Profile | null>(profile_response);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [holdings, setHoldings] = useState<Holdings | null>(holdings_response);
   const [chartData, setChartData] = useState<ChartData | null>(demoData);
   const [symbol, setSymbol] = useState('NIFTY 50');
@@ -141,15 +132,20 @@ function Dashboard() {
 
   useEffect(() => {
     axiosInstance
-      .get('/api/profile')
+      .get('/profile')
       .then((response) => {
-        if (response.data.status === 'success') {
-          setProfile(response.data.data);
-          notifications.show({
-            title: 'Success',
-            message: 'Profile data fetched successfully',
-          });
-        }
+        const newProfile = {
+          user_id: '1',
+          user_type: response.data.user_type,
+          email: response.data.email,
+          user_name: response.data.user_name,
+          broker: response.data.broker,
+        };
+        setProfile(newProfile);
+        notifications.show({
+          title: 'Success',
+          message: 'Profile data fetched successfully',
+        });
       })
       .catch((error) => {
         console.error('Error fetching profile:', error);
@@ -159,24 +155,24 @@ function Dashboard() {
         });
       });
 
-    axiosInstance
-      .get('/api/holdings')
-      .then((response) => {
-        if (response.data.status === 'success') {
-          setHoldings(response.data);
-          notifications.show({
-            title: 'Success',
-            message: 'Holdings data fetched successfully',
-          });
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching holdings:', error);
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to fetch holdings data',
-        });
-      });
+    // axiosInstance
+    //   .get('/api/holdings')
+    //   .then((response) => {
+    //     if (response.data.status === 'success') {
+    //       setHoldings(response.data);
+    //       notifications.show({
+    //         title: 'Success',
+    //         message: 'Holdings data fetched successfully',
+    //       });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error fetching holdings:', error);
+    //     notifications.show({
+    //       title: 'Error',
+    //       message: 'Failed to fetch holdings data',
+    //     });
+    //   });
 
     if (fromDate && toDate && symbol) fetchChartData(symbol, fromDate, toDate);
   }, []);
