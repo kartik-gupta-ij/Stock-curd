@@ -20,31 +20,22 @@ export function OrderForm({ handleSubmit }: OrderFormProps) {
   });
 
   return (
-    <Box
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Card shadow="sm" padding="lg" radius="md" m="xl" w="400" withBorder>
-        <Title order={2} mb="md">
-          Place Order
-        </Title>
-        <form
-          onSubmit={form.onSubmit((values) =>
-            handleSubmit(values.symbol, values.quantity, values.price)
-          )}
-        >
-          <Stack gap="sm">
-            <TextInput required label="Symbol" {...form.getInputProps('symbol')} />
-            <NumberInput required label="Quantity" {...form.getInputProps('quantity')} />
-            <NumberInput required label="Price" {...form.getInputProps('price')} />
-            <Button type="submit">Place Order</Button>
-          </Stack>
-        </form>
-      </Card>
-    </Box>
+    <Card shadow="sm" padding="lg" radius="md" withBorder w={'100%'}>
+      <Title order={2} mb="md">
+        Place Order
+      </Title>
+      <form
+        onSubmit={form.onSubmit((values) =>
+          handleSubmit(values.symbol, values.quantity, values.price)
+        )}
+      >
+        <Stack gap="sm">
+          <TextInput required label="Symbol" {...form.getInputProps('symbol')} />
+          <NumberInput required label="Quantity" {...form.getInputProps('quantity')} />
+          <NumberInput required label="Price" {...form.getInputProps('price')} />
+          <Button type="submit">Place Order</Button>
+        </Stack>
+      </form>
+    </Card>
   );
 }
