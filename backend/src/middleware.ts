@@ -9,7 +9,6 @@ export function authenticateToken(req: Request, res: Response, next) {
     res.status(401).json({ message: "Access denied" });
     return;
   }
-
   jwt.verify(
     token.replace("Bearer ", ""),
     process.env.SECRET_KEY as string,

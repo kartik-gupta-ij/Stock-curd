@@ -12,7 +12,7 @@ import {
 } from "./handlers/authentication.ts";
 import { profileHandler } from "./handlers/user.ts";
 import { historicalPricesHandler } from "./handlers/prices.ts";
-import { orderHandler } from "./handlers/holding.ts";
+import { orderHandler, protfolioHandler, protfolioStaticHandler } from "./handlers/holding.ts";
 
 // Create a new express application instance
 const app = express();
@@ -45,6 +45,16 @@ app.post("/register", asyncHandler(registrationHandler));
 app.post("/login", asyncHandler(loginHandler));
 app.get("/profile", authenticateToken, asyncHandler(profileHandler));
 app.post("/order/place_order", authenticateToken, asyncHandler(orderHandler));
+app.get(
+  "/portfolio/user_holdings",
+  authenticateToken,
+  asyncHandler(protfolioHandler)
+);
+app.get(
+  "/portfolio/holdings",
+  authenticateToken,
+  asyncHandler(protfolioStaticHandler)
+);
 app.get("/historical-data", historicalPricesHandler);
 
 app.get("/", (req: Request, res: Response) => {

@@ -42,41 +42,11 @@ interface ChartData {
   }[];
 }
 
-const holdings_response = {
-  status: 'success',
-  data: [
-    {
-      tradingsymbol: 'GOLDBEES',
-      exchange: 'BSE',
-      isin: 'INF204KB17I5',
-      quantity: 2,
-      authorised_date: '2021-06-08 00:00:00',
-      average_price: 40.67,
-      last_price: 42.47,
-      close_price: 42.28,
-      pnl: 3.5999999999999943,
-      day_change: 0.18999999999999773,
-      day_change_percentage: 0.44938505203405327,
-    },
-    {
-      tradingsymbol: 'IDEA',
-      exchange: 'NSE',
-      isin: 'INE669E01016',
-      quantity: 5,
-      authorised_date: '2021-06-08 00:00:00',
-      average_price: 8.466,
-      last_price: 10,
-      close_price: 10.1,
-      pnl: 7.6700000000000035,
-      day_change: -0.09999999999999964,
-      day_change_percentage: -0.9900990099009866,
-    },
-  ],
-};
+
 
 function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [holdings, setHoldings] = useState<Holdings | null>(holdings_response);
+  const [holdings, setHoldings] = useState<Holdings | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [symbol, setSymbol] = useState('NIFTY 50');
   const [fromDate, setFromDate] = useState<Date | null>(new Date('2017-01-02T00:00:00+05:30'));
@@ -131,24 +101,24 @@ function Dashboard() {
         });
       });
 
-    // axiosInstance
-    //   .get('/api/holdings')
-    //   .then((response) => {
-    //     if (response.data.status === 'success') {
-    //       setHoldings(response.data);
-    //       notifications.show({
-    //         title: 'Success',
-    //         message: 'Holdings data fetched successfully',
-    //       });
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error fetching holdings:', error);
-    //     notifications.show({
-    //       title: 'Error',
-    //       message: 'Failed to fetch holdings data',
-    //     });
-    //   });
+    axiosInstance
+      .get('/portfolio/holdings')
+      .then((response) => {
+        if (response.data.status === 'success') {
+          setHoldings(response.data);
+          notifications.show({
+            title: 'Success',
+            message: 'Holdings data fetched successfully',
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching holdings:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to fetch holdings data',
+        });
+      });
 
     if (fromDate && toDate && symbol) fetchChartData(symbol, fromDate, toDate);
   }, []);
@@ -203,7 +173,7 @@ function Dashboard() {
         }}
       >
         {profile && <ProfileCard profile={profile} />}
-        {totalPnL && <TotalPnLCard totalPnL={totalPnL} />}
+        {totalPnL && <TotalPnLCard totalPnL={totalPnL}  />}
         <OrderForm handleSubmit={handleSubmit} />
         <Card shadow="sm" padding="lg" radius="md" m="xl" w="400" withBorder>
           <Title order={2} mb="md">
@@ -225,7 +195,7 @@ function Dashboard() {
       <LineChart
         h={300}
         data={chartData?.data ?? []}
-        dataKey='date'
+        dataKey="date"
         series={[{ name: 'price', color: 'blue' }]}
       />
       <ColorSchemeToggle />
