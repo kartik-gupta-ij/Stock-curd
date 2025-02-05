@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { LineChart } from '@mantine/charts';
 import { Box, Card, Select, Stack, Title } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
+import { notifications } from '@mantine/notifications';
+import { axiosInstance } from '../utils/axiosSetup';
 import { OrderForm } from './OrderForm';
 import { ProfileCard } from './ProfileCard';
 import { TotalPnLCard } from './TotalPnLCard';
+
 
 export interface Profile {
   user_id: string;
@@ -117,39 +119,63 @@ function Dashboard() {
 
   const fetchChartData = async (symbol: string, fromDate: Date | null, toDate: Date | null) => {
     try {
-      const response = await axios.get('http://localhost:3000/historical-data', {
+      const response = await axiosInstance.get('/historical-data', {
         params: { symbol, from_date: fromDate, to_date: toDate },
       });
       setChartData({
         status: 'success',
         data: response.data,
       });
+      notifications.show({
+        title: 'Success',
+        message: 'Chart data fetched successfully',
+      });
     } catch (error) {
       console.error('Error fetching data:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to fetch chart data',
+      });
     }
   };
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get('/api/profile')
       .then((response) => {
         if (response.data.status === 'success') {
           setProfile(response.data.data);
+          notifications.show({
+            title: 'Success',
+            message: 'Profile data fetched successfully',
+          });
         }
       })
       .catch((error) => {
         console.error('Error fetching profile:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to fetch profile data',
+        });
       });
 
-    axios
+    axiosInstance
       .get('/api/holdings')
       .then((response) => {
         if (response.data.status === 'success') {
           setHoldings(response.data);
+          notifications.show({
+            title: 'Success',
+            message: 'Holdings data fetched successfully',
+          });
         }
       })
       .catch((error) => {
         console.error('Error fetching holdings:', error);
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to fetch holdings data',
+        });
       });
 
     if (fromDate && toDate && symbol) fetchChartData(symbol, fromDate, toDate);
@@ -164,9 +190,17 @@ function Dashboard() {
   const handleSubmit = (symbolFrom: string, quantity: number, price: number) => {
     if (!symbolFrom || quantity <= 0 || price <= 0) {
       console.error('All fields are required and must be valid.');
+      notifications.show({
+        title: 'Error',
+        message: 'All fields are required and must be valid',
+      });
       return;
     }
     console.log('Order placed:', { symbol: symbolFrom, quantity, price });
+    notifications.show({
+      title: 'Success',
+      message: 'Order placed successfully',
+    });
   };
 
   return (

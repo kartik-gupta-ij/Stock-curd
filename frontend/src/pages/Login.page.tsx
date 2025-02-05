@@ -1,9 +1,10 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Anchor,
   Box,
   Button,
   Checkbox,
-  Divider,
   Group,
   Paper,
   PaperProps,
@@ -14,9 +15,12 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { axiosInstance } from '../utils/axiosSetup';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
+  const navigate = useNavigate();
   const form = useForm({
     initialValues: {
       username: '',
@@ -30,6 +34,81 @@ export function AuthenticationForm(props: PaperProps) {
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
     },
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (values: typeof form.values) => {
+    if (type === 'register') {
+      try {
+        const response = await axiosInstance.post('/register', {
+          username: values.username,
+          password: values.password,
+        });
+        if (response.status === 201) {
+          notifications.show({
+            title: 'Success',
+            message: 'User registered successfully',
+          });
+          toggle();
+        } else {
+          notifications.show({
+            title: 'Error',
+            message: 'Internal server error',
+          });
+        }
+      } catch (error: any) {
+        console.error(error);
+        if (error.response.status === 400) {
+          notifications.show({
+            title: 'Error',
+            message: 'User already exists',
+          });
+        }
+        notifications.show({
+          title: 'Error',
+          message: 'An error occurred',
+        });
+      }
+    } else {
+      try {
+        const response = await axiosInstance.post('/login', {
+          username: values.username,
+          password: values.password,
+        });
+        if (response.status === 200) {
+          localStorage.setItem('token', response.data.token);
+          notifications.show({
+            title: 'Success',
+            message: 'Login successful',
+          });
+          navigate('/dashboard');
+        } else {
+          notifications.show({
+            title: 'Error',
+            message: 'Internal server error',
+          });
+        }
+      } catch (error: any) {
+        console.error(error);
+        if (error.response.status === 400) {
+          notifications.show({
+            title: 'Error',
+            message: 'Invalid credentials',
+          });
+        } else {
+          notifications.show({
+            title: 'Error',
+            message: 'An error occurred',
+          });
+        }
+      }
+    }
+  };
 
   return (
     <Box
@@ -52,7 +131,7 @@ export function AuthenticationForm(props: PaperProps) {
           Welcome to Mantine, {type} with
         </Text>
 
-        <form onSubmit={form.onSubmit(() => {})}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             {type === 'register' && (
               <TextInput
