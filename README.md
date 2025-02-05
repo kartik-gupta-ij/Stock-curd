@@ -84,6 +84,4 @@ This project consists of a backend and a frontend. Follow the instructions below
 - `src/components`: Directory containing reusable React components.
 - `src/utils`: Directory containing utility functions and Axios setup.
 
-## License
 
-This project is licensed under the MIT License.
