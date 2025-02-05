@@ -16,8 +16,8 @@ import {
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { axiosInstance } from '../utils/axiosSetup';
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
+import { axiosInstance } from '../utils/axiosSetup';
 
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
@@ -72,7 +72,7 @@ export function AuthenticationForm(props: PaperProps) {
           notifications.show({
             title: 'Error',
             message: 'User already exists',
-            color: 'red', 
+            color: 'red',
           });
         } else {
           notifications.show({
@@ -140,7 +140,7 @@ export function AuthenticationForm(props: PaperProps) {
     >
       <Paper radius="md" p="xl" withBorder {...props}>
         <Text size="lg" fw={500}>
-          Welcome to Mantine, {type} with
+          Welcome to Kartik's assignment, {type} with
         </Text>
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -198,7 +198,7 @@ export function AuthenticationForm(props: PaperProps) {
           </Group>
         </form>
       </Paper>
-         <ColorSchemeToggle />
+      <ColorSchemeToggle />
     </Box>
   );
 }
