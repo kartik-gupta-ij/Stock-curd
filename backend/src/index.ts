@@ -15,7 +15,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://ethneen.vercel.app"],
+    origin: ["http://localhost:5173", "https://ethneen.vercel.app"],
   })
 );
 
@@ -31,6 +31,25 @@ const db = await open({
 
 await db.exec(dbm.create_user_table);
 
+// Middleware to authenticate JWT
+function authenticateToken(req: Request, res: Response, next) {
+  const token = req.header("Authorization");
+  if (!token) {
+    res.status(401).json({ message: "Access denied" });
+    return;
+  }
+
+  jwt.verify(token.replace("Bearer ", ""), SECRET_KEY, (err, user: any) => {
+    if (err || user == undefined) {
+      res.status(403).json({ message: "Invalid token" });
+      return;
+    }
+    res.locals.username = user.username;
+    res.locals.userid = user.id;
+    next();
+  });
+}
+
 // Register user
 app.post(
   "/register",
@@ -42,7 +61,7 @@ app.post(
     try {
       const hashedPassword = await hash(password, 10);
       const result = await db.run(
-        'INSERT INTO users (user_name, password, user_type, email, broker) VALUES (?, ?, "individual", "e@gmail.com", "ZERODHA")',
+        'INSERT OR IGNORE INTO users (user_name, password, user_type, email, broker) VALUES (?, ?, "individual", "e@gmail.com", "ZERODHA")',
         [username, hashedPassword]
       );
       if (result.changes && result.changes == 1) {
@@ -84,6 +103,34 @@ app.post(
     );
 
     res.json({ message: "Login successful", token });
+  })
+);
+
+type User = {
+  user_name: string;
+  user_type: string;
+  email: string;
+  broker: string;
+};
+
+function mapToUser(input: { [key: string]: any }): User {
+  const { user_name, user_type, email, broker } = input;
+  return { user_name, user_type, email, broker };
+}
+
+// Login user
+app.get(
+  "/profile",
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const userid = res.locals.userid;
+    const user = await db.get("SELECT * FROM users WHERE id = ?", [userid]);
+
+    if (!user) {
+      res.status(400).json({ message: "User not found" });
+    }
+
+    res.json(mapToUser(user));
   })
 );
 
