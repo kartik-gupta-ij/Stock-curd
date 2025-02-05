@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 
-const baseURL = 'http://localhost:3000';
+
+const baseURL = 'https://kartik-assignment.vercel.app/';
 
 export const axiosInstance = axios.create({
   baseURL,

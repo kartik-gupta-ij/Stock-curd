@@ -8,3 +8,14 @@ export const create_user_table = `
                 broker TEXT NOT NULL
             );
 `;
+
+export const create_order_table = `
+            CREATE TABLE IF NOT EXISTS orders (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NUll,
+                price REAL NOT NULL,
+                quantity INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
+`;

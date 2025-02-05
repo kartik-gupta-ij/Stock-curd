@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 // Middleware to authenticate JWT
 export function authenticateToken(req: Request, res: Response, next) {
   const token = req.header("Authorization");
+
   if (!token) {
     res.status(401).json({ message: "Access denied" });
     return;

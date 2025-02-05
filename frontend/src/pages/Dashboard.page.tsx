@@ -185,7 +185,7 @@ function Dashboard() {
 
   const totalPnL = holdings?.data.reduce((sum, item) => sum + item.pnl, 0);
 
-  const handleSubmit = (symbolFrom: string, quantity: number, price: number) => {
+  const handleSubmit = async (symbolFrom: string, quantity: number, price: number) => {
     if (!symbolFrom || quantity <= 0 || price <= 0) {
       console.error('All fields are required and must be valid.');
       notifications.show({
@@ -194,11 +194,31 @@ function Dashboard() {
       });
       return;
     }
-    console.log('Order placed:', { symbol: symbolFrom, quantity, price });
-    notifications.show({
-      title: 'Success',
-      message: 'Order placed successfully',
-    });
+    try {
+      const response = await axiosInstance.post('/order/place_order', {
+        symbol: symbolFrom,
+        quantity,
+        price,
+      });
+
+      if (response.status === 200) {
+        notifications.show({
+          title: 'Success',
+          message: 'Order placed successfully',
+        });
+      } else {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to place order',
+        });
+      }
+    } catch (error) {
+      console.error('Error placing order:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to place order',
+      });
+    }
   };
 
   return (

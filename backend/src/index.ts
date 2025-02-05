@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import sqlite3, { Database } from "sqlite3";
 import { open } from "sqlite";
 import cors from "cors";
-import { create_user_table } from "./db.ts";
+import { create_order_table, create_user_table } from "./db.ts";
 import bodyParser from "body-parser";
 import asyncHandler from "express-async-handler";
 import { authenticateToken } from "./middleware.ts";
@@ -12,13 +12,14 @@ import {
 } from "./handlers/authentication.ts";
 import { profileHandler } from "./handlers/user.ts";
 import { historicalPricesHandler } from "./handlers/prices.ts";
+import { orderHandler } from "./handlers/holding.ts";
 
 // Create a new express application instance
 const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://kartik-assignment.vercel.app"],
   })
 );
 
@@ -33,6 +34,7 @@ const db = await open({
 });
 
 await db.exec(create_user_table);
+await db.exec(create_order_table);
 
 app.use((req, res, next) => {
   res.locals.db = db;
@@ -42,6 +44,7 @@ app.use((req, res, next) => {
 app.post("/register", asyncHandler(registrationHandler));
 app.post("/login", asyncHandler(loginHandler));
 app.get("/profile", authenticateToken, asyncHandler(profileHandler));
+app.post("/order/place_order", authenticateToken, asyncHandler(orderHandler));
 app.get("/historical-data", historicalPricesHandler);
 
 app.get("/", (req: Request, res: Response) => {
