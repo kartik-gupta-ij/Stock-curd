@@ -41,7 +41,7 @@ export function AuthenticationForm(props: PaperProps) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // navigate('/dashboard');
+      navigate('/dashboard');
     }
   }, [navigate]);
 

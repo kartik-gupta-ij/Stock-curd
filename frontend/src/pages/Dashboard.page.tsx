@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LineChart } from '@mantine/charts';
-import { Box, Card, Select, Stack, Title } from '@mantine/core';
+import { Box, Button, Card, Group, Select, Stack, Title } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
@@ -41,8 +41,6 @@ interface ChartData {
     price: number;
   }[];
 }
-
-
 
 function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -173,7 +171,7 @@ function Dashboard() {
         }}
       >
         {profile && <ProfileCard profile={profile} />}
-        {totalPnL && <TotalPnLCard totalPnL={totalPnL}  />}
+        {totalPnL && <TotalPnLCard totalPnL={totalPnL} />}
         <OrderForm handleSubmit={handleSubmit} />
         <Card shadow="sm" padding="lg" radius="md" m="xl" w="400" withBorder>
           <Title order={2} mb="md">
@@ -191,13 +189,23 @@ function Dashboard() {
           </Stack>
         </Card>
       </Box>
-
       <LineChart
         h={300}
         data={chartData?.data ?? []}
         dataKey="date"
         series={[{ name: 'price', color: 'blue' }]}
       />
+
+      <Group justify="center" my="xl">
+        <Button
+          onClick={() => {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+          }}
+        >
+          Logout
+        </Button>
+      </Group>
       <ColorSchemeToggle />
     </Box>
   );
