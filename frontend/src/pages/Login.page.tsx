@@ -19,19 +19,27 @@ import { notifications } from '@mantine/notifications';
 import { ColorSchemeToggle } from '@/components/ColorSchemeToggle/ColorSchemeToggle';
 import { axiosInstance } from '../utils/axiosSetup';
 
+const validateEmail = (email: string) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
 export function AuthenticationForm(props: PaperProps) {
   const [type, toggle] = useToggle(['login', 'register']);
   const navigate = useNavigate();
   const form = useForm({
     initialValues: {
       username: '',
-      name: '',
+      email: '',
       password: '',
       terms: true,
     },
 
     validate: {
-      name: (val) => (type === 'register' && val.length === 0 ? 'Name is required' : null),
+      email: (val) => (type !== 'login' && !validateEmail(val) ? 'Invalid email' : null),
       username: (val) => (val.length === 0 ? 'Username is required' : null),
       password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
       terms: (val) => (type === 'register' && !val ? 'You must accept terms and conditions' : null),
@@ -51,6 +59,7 @@ export function AuthenticationForm(props: PaperProps) {
         const response = await axiosInstance.post('/register', {
           username: values.username,
           password: values.password,
+          email: values.email,
         });
         if (response.status === 201) {
           notifications.show({
@@ -147,11 +156,11 @@ export function AuthenticationForm(props: PaperProps) {
           <Stack>
             {type === 'register' && (
               <TextInput
-                label="Name"
-                placeholder="Your name"
-                value={form.values.name}
-                onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
-                error={form.errors.name}
+                label="Email"
+                placeholder="Your email"
+                value={form.values.email}
+                onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
+                error={form.errors.email}
                 radius="md"
               />
             )}
@@ -162,7 +171,7 @@ export function AuthenticationForm(props: PaperProps) {
               placeholder="hello@mantine.dev"
               value={form.values.username}
               onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
-              error={form.errors.email && 'Invalid username'}
+              error={form.errors.username && 'Invalid username'}
               radius="md"
             />
 

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import sqlite3, { Database } from "sqlite3";
+import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import cors from "cors";
 import { create_order_table, create_user_table } from "./db.ts";
@@ -14,7 +14,6 @@ import { profileHandler } from "./handlers/user.ts";
 import { historicalPricesHandler } from "./handlers/prices.ts";
 import { orderHandler, protfolioHandler, protfolioStaticHandler } from "./handlers/holding.ts";
 
-// Create a new express application instance
 const app = express();
 
 app.use(
@@ -25,11 +24,10 @@ app.use(
 
 app.use(bodyParser.json());
 
-// Set the network port
 const port = process.env.PORT || 3000;
 
 const db = await open({
-  filename: process.env.DB || "./db/database.db", // Path to your SQLite file
+  filename: process.env.DB || "./db/database.db", 
   driver: sqlite3.Database,
 });
 
@@ -61,13 +59,6 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Welcome to the Express + TypeScript Server!" });
 });
 
-// Error handling middleware
-app.use((err, _req, res, _next) => {
-  console.error(err.stack);
-  res.status(500).send("Internal Server Error");
-});
-
-// Start the Express server
 app.listen(port, () => {
   console.log(`The server is running at http://localhost:${port}`);
 });

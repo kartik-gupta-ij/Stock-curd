@@ -1,9 +1,9 @@
-import express, { Request, Response } from "express";
+import   { Request, Response } from "express";
 import { hash, compare } from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const registrationHandler = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { username, password ,email} = req.body;
   if (!username || !password) {
     res.status(400).json({ message: "Username and password are required" });
   }
@@ -11,8 +11,8 @@ export const registrationHandler = async (req: Request, res: Response) => {
   try {
     const hashedPassword = await hash(password, 10);
     const result = await res.locals.db.run(
-      'INSERT OR IGNORE INTO users (user_name, password, user_type, email, broker) VALUES (?, ?, "individual", "e@gmail.com", "ZERODHA")',
-      [username, hashedPassword]
+      'INSERT OR IGNORE INTO users (user_name, password, user_type, email, broker) VALUES (?, ?, "individual", ?, "ZERODHA")',
+      [username, hashedPassword,email]
     );
     if (result.changes && result.changes == 1) {
       res.status(201).json({ message: "User registered successfully" });
